@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment / secrets
+.env
+.env.*
+
+# Claude Code
+.claude/
+
+# Claude Code instructions
+CLAUDE.md
+
+# Tests
+.pytest_cache/
