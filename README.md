@@ -12,9 +12,11 @@ for an unweighted ridge regression.
 ### Data
 
 We observe the daily returns $r_{i,t}$ of 50 stocks over 754 dates. For each stock $i$ and each
-date $t \in \{250, \dots, 753\}$ (that is, $T = 504$ dates), let
+date $t \in \lbrace 250, \dots, 753 \rbrace$ (that is, $T = 504$ dates), let
 
-$$x_{i,t} = (r_{i,t-1}, r_{i,t-2}, \dots, r_{i,t-250}) \in \mathbb{R}^{250}$$
+```math
+x_{i,t} = (r_{i,t-1}, r_{i,t-2}, \dots, r_{i,t-250}) \in \mathbb{R}^{250}
+```
 
 be the vector of the 250 past returns and $y_{i,t} = r_{i,t}$ the target. The hidden test set
 contains 50 other stocks over the same period: the model must generalise from one stock to another,
@@ -24,11 +26,15 @@ not from one period to another.
 
 The prediction is a linear model with $F = 10$ factors:
 
-$$\hat y_{i,t} = \beta^\top A^\top x_{i,t}, \qquad A \in \mathbb{R}^{250 \times 10}, \quad \beta \in \mathbb{R}^{10},$$
+```math
+\hat y_{i,t} = \beta^\top A^\top x_{i,t}, \qquad A \in \mathbb{R}^{250 \times 10}, \quad \beta \in \mathbb{R}^{10},
+```
 
 where the matrix $A$ must lie on the Stiefel manifold:
 
-$$A^\top A = I_{10}.$$
+```math
+A^\top A = I_{10}.
+```
 
 A submission that violates this constraint (to within $10^{-6}$ on any entry) receives a score
 of $-1$.
@@ -38,7 +44,9 @@ of $-1$.
 For each date, the vector of predictions $\hat y_t = (\hat y_{i,t})_i$ is compared with the vector of
 realised returns $y_t = (y_{i,t})_i$ by cosine similarity, and the result is averaged over dates:
 
-$$\mathrm{score} = \frac{1}{T} \sum_{t} \frac{\langle \hat y_t, y_t \rangle}{\lVert \hat y_t \rVert \, \lVert y_t \rVert}.$$
+```math
+\mathrm{score} = \frac{1}{T} \sum_{t} \frac{\langle \hat y_t, y_t \rangle}{\lVert \hat y_t \rVert \, \lVert y_t \rVert}.
+```
 
 The metric depends only on the direction of the predictions at each date, not on their scale.
 
@@ -46,10 +54,12 @@ The metric depends only on the direction of the predictions at each date, not on
 
 The prediction depends on $(A, \beta)$ only through the vector
 
-$$w = A\beta \in \mathbb{R}^{250}, \qquad \hat y_{i,t} = w^\top x_{i,t}.$$
+```math
+w = A\beta \in \mathbb{R}^{250}, \qquad \hat y_{i,t} = w^\top x_{i,t}.
+```
 
 Conversely, any $w \neq 0$ can be written as $A\beta$ with $A$ on the Stiefel manifold: complete
-$w / \lVert w \rVert$ with 9 orthonormal vectors (QR decomposition of $[\,w, Z\,]$, where $Z$ is a
+$w / \lVert w \rVert$ with 9 orthonormal vectors (QR decomposition of $[w, Z]$, where $Z$ is a
 $250 \times 9$ Gaussian matrix drawn with a fixed seed), then set $\beta = A^\top w$. Since $w$
 lies in the column space of $A$, this gives $A\beta = w$.
 
@@ -63,13 +73,16 @@ The final model is the sum of two normalised estimators of $w$.
 
 ### 1. Date-weighted ridge regression
 
-$$\hat w_R = \arg\min_w \sum_t \omega_t \sum_i \left(y_{i,t} - w^\top x_{i,t}\right)^2 + \lambda \lVert w \rVert^2,
-\qquad \omega_t \propto \frac{1}{\lVert y_t \rVert},$$
+```math
+\hat w_R = \arg\min_w \sum_t \omega_t \sum_i \left(y_{i,t} - w^\top x_{i,t}\right)^2 + \lambda \lVert w \rVert^2, \qquad \omega_t \propto \frac{1}{\lVert y_t \rVert},
+```
 
 with weights $\omega_t$ normalised to a mean of 1 and $\lambda = 10^4$. The solution is in closed
 form:
 
-$$\hat w_R = \left(X^\top \Omega X + \lambda I\right)^{-1} X^\top \Omega y.$$
+```math
+\hat w_R = \left(X^\top \Omega X + \lambda I\right)^{-1} X^\top \Omega y.
+```
 
 The weighting corrects a mismatch between least squares and the metric. The metric is a cosine per
 date, so it is insensitive to the magnitude of the returns on that date. Without weighting, a few
@@ -81,11 +94,12 @@ The parameter $\lambda$ has little effect over the range $[1, 10^4]$: with 25,20
 
 ### 2. Direct maximisation of the cosine with smoothing
 
-$$\hat w_C = \arg\max_{\lVert u \rVert = 1} \;
-\frac{1}{T} \sum_t \frac{\langle X_t u, y_t \rangle}{\lVert X_t u \rVert \, \lVert y_t \rVert}
-- \lambda_s \, d \sum_{k=1}^{d-1} (u_{k+1} - u_k)^2,$$
+```math
+\hat w_C = \arg\max_{\lVert u \rVert = 1} \left[ \frac{1}{T} \sum_{t} \frac{\langle X_t u, y_t \rangle}{\lVert X_t u \rVert \, \lVert y_t \rVert} - \lambda_s \, d \sum_{k=1}^{d-1} (u_{k+1} - u_k)^2 \right],
+```
 
-where $X_t$ is the matrix of the $x_{i,t}$ at date $t$, $d = 250$ and $\lambda_s = 3 \cdot 10^{-5}$.
+where $X_t \in \mathbb{R}^{n \times 250}$ is the matrix whose rows are the vectors $x_{i,t}^\top$ of the
+$n$ training stocks at date $t$, $d = 250$ is the number of lags and $\lambda_s = 3 \cdot 10^{-5}$.
 
 The first term is exactly the challenge metric on the training sample. The second penalises
 changes in the filter from one lag to the next and limits overfitting. The normalisation
@@ -100,7 +114,9 @@ penalty, random initialisations all converge to the same solution, with an in-sa
 
 ### 3. Blend
 
-$$w = \frac{\hat w_R}{\lVert \hat w_R \rVert} + \hat w_C.$$
+```math
+w = \frac{\hat w_R}{\lVert \hat w_R \rVert} + \hat w_C.
+```
 
 The two components have equal weight, and this weight is not tuned on the data. The two filters are
 close (cosine of 0.94 between them) but not identical. Averaging them reduces estimation variance:
