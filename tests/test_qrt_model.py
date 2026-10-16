@@ -132,6 +132,6 @@ def test_save_submission(tmp_path):
 def test_reproduces_submitted_file():
     X, y, _, _ = load_data(ROOT / "data")
     A, beta = fit(X, y)
-    A_sub, beta_sub = read_submission(ROOT / "soumission" / "soumission_modele4.csv")
+    A_sub, beta_sub = read_submission(ROOT / "submissions" / "final_submission.csv")
     assert np.allclose(A, A_sub) and np.allclose(beta, beta_sub)
     assert np.isclose(score(y, X @ A @ beta), 0.1462, atol=1e-4)

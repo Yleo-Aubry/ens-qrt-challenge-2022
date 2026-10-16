@@ -1,4 +1,4 @@
-"""Model: blend of a date-weighted ridge and a smoothed direct cosine maximization.
+"""Model: blend of a date-weighted ridge and a smoothed direct cosine maximisation.
 
 Any submission (A, beta) predicts X @ A @ beta, so the model is fully described by the
 vector w = A @ beta of 250 weights. The model estimates w, then writes it as A @ beta
@@ -32,7 +32,7 @@ def ridge_w(X, y, lam=RIDGE_LAMBDA, p=1.0, n_dates=N_DATES):
 
 
 def cos_objective(v, Xr, Y, smoothing=0.0):
-    """Objective minimized by cos_w, and its gradient with respect to v.
+    """Objective minimised by cos_w, and its gradient with respect to v.
 
     -mean over dates of cos(Xr[:, t] @ v, Y[:, t]) + smoothing * 250 * sum_k (u_{k+1} - u_k)^2,
     with u = v / |v|. Xr has shape (n_stocks, n_dates, 250), Y (n_stocks, n_dates).
@@ -55,7 +55,7 @@ def cos_objective(v, Xr, Y, smoothing=0.0):
 
 
 def cos_w(X, y, smoothing=SMOOTHING, w0=None, maxiter=1000, n_dates=N_DATES):
-    """Unit-norm weights (250,) maximizing the mean cosine minus the smoothing penalty.
+    """Unit-norm weights (250,) maximising the mean cosine minus the smoothing penalty.
 
     L-BFGS started from the date-weighted ridge (or from w0).
     """
@@ -71,7 +71,7 @@ def cos_w(X, y, smoothing=SMOOTHING, w0=None, maxiter=1000, n_dates=N_DATES):
 
 
 def blend_w(X, y, n_dates=N_DATES):
-    """Model weights: sum of the normalized ridge and smoothed-cosine weights."""
+    """Model weights: sum of the normalised ridge and smoothed-cosine weights."""
     w_ridge = ridge_w(X, y, n_dates=n_dates)
     w_ridge /= np.linalg.norm(w_ridge)
     return w_ridge + cos_w(X, y, w0=w_ridge, n_dates=n_dates)

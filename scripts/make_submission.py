@@ -1,7 +1,7 @@
 """Fit the model on the 50 training stocks and write the submission file.
 
 Usage, from the repository root:
-    python scripts/make_submission.py soumission/new_submission.csv
+    python scripts/make_submission.py submissions/new_submission.csv
 """
 
 import argparse
