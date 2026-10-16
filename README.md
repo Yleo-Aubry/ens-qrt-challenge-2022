@@ -83,7 +83,7 @@ The parameter $\lambda$ has little effect over the range $[1, 10^4]$: with 25,20
 
 $$\hat w_C = \arg\max_{\lVert u \rVert = 1} \;
 \frac{1}{T} \sum_t \frac{\langle X_t u, y_t \rangle}{\lVert X_t u \rVert \, \lVert y_t \rVert}
-\;-\; \lambda_s \, d \sum_{k=1}^{d-1} (u_{k+1} - u_k)^2,$$
+- \lambda_s \, d \sum_{k=1}^{d-1} (u_{k+1} - u_k)^2,$$
 
 where $X_t$ is the matrix of the $x_{i,t}$ at date $t$, $d = 250$ and $\lambda_s = 3 \cdot 10^{-5}$.
 
