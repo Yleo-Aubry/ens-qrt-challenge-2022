@@ -148,29 +148,6 @@ The blend is the only model whose gain exceeds two standard errors (2.8). With 5
 public differences below about 0.003 are not significant; the choice rests on cross-validation,
 not on the public leaderboard.
 
-## Approaches not retained
-
-The following were evaluated with the same protocol and not retained. This repository contains
-only the final model; the code for these experiments is not included.
-
-| Approach | Outcome |
-|---|---|
-| Fixed bases of 10 factors (lag blocks, DCT, exponentials) | cross-validation 0.015 to 0.023 |
-| Principal component analysis (10 factors) | public 0.0380 |
-| Autoregressive model AR(10) | public 0.0128 |
-| Clipping returns at 2 standard deviations and Huber loss | best cross-validation (0.066), but in-sample 0.119 and public 0.0724 |
-| Cosine maximisation without smoothing | gain not significant, public 0.0838 |
-| $L^1$ penalty on the filter | no effect, the optimal filter is not sparse |
-| Bagging over stocks or blocks of dates | negative gain |
-| Synthetic stocks (combinations of correlated pairs) | equivalent to a reweighting, no gain |
-| Reweighting stocks by correlation group | equivalent to inverse-volatility weighting, lower in-sample score |
-| Filter estimated on the cross-sectional mean (market timing) | the market component carries only 5% of the target variance, negative gain |
-
-Two findings limit the scope for further gains. The in-sample score is bounded by 0.1491, the
-maximum of the metric over all linear filters, and the date-weighted ridge already reaches 95% of
-it. Moreover, out-of-sample performance comes almost entirely from test stocks that have a highly
-correlated counterpart in the training sample.
-
 ## Repository structure
 
 ```
